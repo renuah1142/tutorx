@@ -2,20 +2,23 @@
 
 ## Overview
 
-TutorX is a static site. The root `index.html` is the entry point, so there is no package install or build step. A GitHub Actions workflow can publish the repository as a GitHub Pages site.
+TutorX is a static site. The root `index.html` is the entry point, so there is no package install or build step. GitHub Actions uploads the repository as a Pages artifact and publishes it.
 
 ## First-time setup
 
-1. Open the repository: https://github.com/renuah1142/tutorx
-2. Ensure the changes containing `index.html`, the documentation and `.github/workflows/pages.yml` are merged into the `main` branch.
-3. Open **Settings → Pages** in the repository.
-4. Under **Build and deployment**, select **GitHub Actions** as the source if it is not already selected.
-5. Open **Actions** and verify the Pages deployment workflow completes successfully.
-6. Open the Pages URL shown in **Settings → Pages**. For a project site, the expected form is `https://renuah1142.github.io/tutorx/`, provided Pages is enabled and the deployment succeeds.
+**Important:** GitHub Actions cannot enable Pages for this repository with the current integration permissions. The repository owner must enable Pages once in Settings before the workflow can deploy. The earlier failed runs stopped at `Configure GitHub Pages` because Pages had not yet been created; the workflow no longer attempts to create it automatically.
+
+1. Open [TutorX Pages settings](https://github.com/renuah1142/tutorx/settings/pages).
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**. This selection enables the Pages site and gives the workflow a deployment target.
+3. Open the [Deploy TutorX to GitHub Pages workflow](https://github.com/renuah1142/tutorx/actions/workflows/pages.yml).
+4. Choose **Run workflow**, select the `main` branch, and run it. A push to `main` will also trigger deployment automatically.
+5. Wait for the run to finish successfully, then open [https://renuah1142.github.io/tutorx/](https://renuah1142.github.io/tutorx/).
+
+If the Settings page does not show a **GitHub Actions** source option or does not let you save it, check that GitHub Pages is available for this repository and that you are signed in as the repository owner.
 
 ## Automatic deployment
 
-The workflow runs on pushes to `main` and can be started manually from the Actions tab. It uploads the repository root as a Pages artifact and deploys it using the official GitHub Pages actions.
+After the one-time setup, the workflow runs on pushes to `main` and can be started manually from the Actions tab. It uploads the repository root as a Pages artifact and deploys it using the official GitHub Pages actions. The workflow intentionally does not try to enable Pages through the Actions token because GitHub rejects that administrative request.
 
 ## Local preview
 
@@ -29,9 +32,11 @@ Then visit `http://localhost:8000`.
 
 ## Troubleshooting
 
-- **404 page:** confirm Pages is enabled, the workflow succeeded, and `index.html` is at the deployed root.
-- **Workflow permission error:** check repository Actions permissions and the workflow's `pages: write` and `id-token: write` permissions.
-- **No deployment environment:** choose GitHub Actions as the Pages source in repository settings and rerun the workflow.
+- **Configure GitHub Pages says `Not Found`:** Pages has not been enabled for the repository yet. Follow the first-time setup above and set the source to **GitHub Actions**.
+- **`Resource not accessible by integration`:** the workflow token cannot create the Pages site. Do not add `enablement: true`; enable Pages once in repository Settings instead.
+- **Deploy job says Pages is not enabled:** verify Settings → Pages → Build and deployment → Source is **GitHub Actions**, then rerun the workflow.
+- **404 page after a successful deployment:** confirm the workflow succeeded and `index.html` is at the deployed root.
+- **Workflow permission error after Pages is enabled:** verify Actions are enabled and the workflow retains `pages: write` and `id-token: write`.
 - **Old content appears:** inspect the latest workflow run and hard-refresh the browser after a successful deployment.
 - **Relative paths break:** prefer relative paths for repository assets; do not assume the site is hosted at the domain root.
 - **Workflow does not run:** confirm the workflow file is merged into `main` and Actions are enabled for the repository.
@@ -45,4 +50,4 @@ Then visit `http://localhost:8000`.
 5. Confirm the Pages workflow succeeded.
 6. Smoke-test dashboard, lesson, quiz, flashcards, subnetting, progress export and mobile layout.
 
-GitHub Pages deployment settings may require a one-time repository owner action. A workflow file alone does not prove that the site is already published.
+A workflow file alone does not prove that the site is already published. Confirm a successful Actions run and open the live Pages URL.
